@@ -1,27 +1,11 @@
-// Nome do cache — MUDA para forçar o Edge a atualizar
-const CACHE_NAME = "inquilinos-cinco";
+const CACHE_NAME = "inquilinos-network-first-v1";
 
-// Lista de ficheiros a cachear — sem "./" porque o Edge Mobile não gosta
-const FILES_TO_CACHE = [
-  "index.html",
-  "santa-barbara.html",
-  "av-marconi.html",
-  "capitao-roby.html",
-  "vila-paulo-jorge.html",
-  "av-eua.html",
-  "manifest.json"
-];
-
-// Instalação do Service Worker
+// Instalação — aqui já não fazemos pre-cache de todas as páginas
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(FILES_TO_CACHE);
-    })
-  );
+  self.skipWaiting();
 });
 
-// Ativação — apaga caches antigos
+// Ativação — limpar caches antigos
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -34,18 +18,45 @@ self.addEventListener("activate", event => {
       )
     )
   );
+  self.clients.claim();
 });
 
-// Interceção de pedidos
+// Estratégia: NETWORK FIRST para pedidos de navegação (HTML)
 self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      // Se existir na cache, devolve
-      if (response) return response;
+  const request = event.request;
 
-      // Caso contrário, vai buscar à internet
-      return fetch(event.request);
+  // Só aplicamos a estratégia especial a pedidos de navegação (páginas)
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // Se conseguir da rede, guarda em cache e devolve
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(request, copy);
+          });
+          return response;
+        })
+        .catch(() => {
+          // Se não houver rede, tenta cache
+          return caches.match(request);
+        })
+    );
+    return;
+  }
+
+  // Para o resto (CSS, JS, imagens, manifest, etc.) usamos cache-first
+  event.respondWith(
+    caches.match(request).then(response => {
+      return response || fetch(request).then(networkResponse => {
+        const copy = networkResponse.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(request, copy);
+        });
+        return networkResponse;
+      });
     })
   );
 });
+
 
