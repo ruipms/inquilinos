@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prédios – Gestão de Inquilinos</title>
 
+  <!-- Manifest da PWA -->
+  <link rel="manifest" href="manifest.json">
+
   <style>
     body {
       margin: 0;
@@ -41,41 +44,45 @@
       background: #145A67;
       color: white;
     }
+
     a.predio {
-  display: block;
-  padding: 15px;
-  margin-bottom: 10px;
-  background: #F2F5F7;
-  border-radius: 8px;
-  font-size: 18px;
-  color: #0A3D46;
-  text-decoration: none;
-}
+      display: block;
+      padding: 15px;
+      margin-bottom: 10px;
+      background: #F2F5F7;
+      border-radius: 8px;
+      font-size: 18px;
+      color: #0A3D46;
+      text-decoration: none;
+    }
 
-a.predio:hover {
-  background: #145A67;
-  color: white;
-}
-
+    a.predio:hover {
+      background: #145A67;
+      color: white;
+    }
   </style>
 </head>
 
 <body>
   <header>Gestão de Inquilinos</header>
 
- <div class="lista-predios">
-  <a class="predio" href="santa-barbara.html">Santa Bárbara</a>
-  <a class="predio" href="av-marconi.html">Av. Marconi</a>
-  <a class="predio" href="capitao-roby.html">Capitão Roby</a>
-  <a class="predio" href="vila-paulo-jorge.html">Vila Paulo Jorge</a>
-  <a class="predio" href="av-eua.html">Av. EUA</a>
-</div>
+  <div class="lista-predios">
+    <a class="predio" href="santa-barbara.html">Santa Bárbara</a>
+    <a class="predio" href="av-marconi.html">Av. Marconi</a>
+    <a class="predio" href="capitao-roby.html">Capitão Roby</a>
+    <a class="predio" href="vila-paulo-jorge.html">Vila Paulo Jorge</a>
+    <a class="predio" href="av-eua.html">Av. EUA</a>
+  </div>
 
+  <!-- Registo do Service Worker -->
   <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/inquilinos/service-worker.js");
-  }
-</script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker registado"))
+        .catch(err => console.log("Erro ao registar SW:", err));
+    }
+  </script>
 
 </body>
 </html>
+
