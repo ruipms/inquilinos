@@ -1,5 +1,5 @@
 // Nome do cache — MUDA para forçar o Edge a atualizar
-const CACHE_NAME = "inquilinos-quatro";
+const CACHE_NAME = "inquilinos-cinco";
 
 // Lista de ficheiros a cachear — sem "./" porque o Edge Mobile não gosta
 const FILES_TO_CACHE = [
