@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestão de Inquilinos</title>
+  <title>Prédios – Gestão de Inquilinos</title>
 
   <!-- Manifest da PWA -->
   <link rel="manifest" href="manifest.json">
@@ -37,26 +37,12 @@
       background: #F2F5F7;
       border-radius: 8px;
       font-size: 18px;
-      cursor: pointer;
-    }
-
-    .predio:hover {
-      background: #145A67;
-      color: white;
-    }
-
-    a.predio {
-      display: block;
-      padding: 15px;
-      margin-bottom: 10px;
-      background: #F2F5F7;
-      border-radius: 8px;
-      font-size: 18px;
       color: #0A3D46;
+      cursor: pointer;
       text-decoration: none;
     }
 
-    a.predio:hover {
+    .predio:hover {
       background: #145A67;
       color: white;
     }
@@ -67,15 +53,19 @@
   <header>Gestão dos Inquilinos</header>
 
   <div class="lista-predios">
-    <a class="predio" href="santa-barbara.html">Santa Bárbara</a>
-   <!-- <a class="predio" href="av-marconi.html">Av. Marconi</a>
-    <a class="predio" href="capitao-roby.html">Capitão Roby</a>
-    <a class="predio" href="vila-paulo-jorge.html">Vila Paulo Jorge</a>
-    <a class="predio" href="av-eua.html">Av. EUA</a> -->
+    <div class="predio" onclick="openPage('santa-barbara.html')">Santa Bárbara</div>
+    <div class="predio" onclick="openPage('av-marconi.html')">Av. Marconi</div>
+    <div class="predio" onclick="openPage('capitao-roby.html')">Capitão Roby</div>
+    <div class="predio" onclick="openPage('vila-paulo-jorge.html')">Vila Paulo Jorge</div>
+    <div class="predio" onclick="openPage('av-eua.html')">Av. EUA</div>
   </div>
 
-  <!-- Registo do Service Worker -->
   <script>
+    function openPage(page) {
+      window.location.href = page;
+    }
+
+    // Registo do Service Worker
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
         .then(() => console.log("Service Worker registado"))
@@ -85,4 +75,5 @@
 
 </body>
 </html>
+
 
