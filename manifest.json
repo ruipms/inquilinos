@@ -1,7 +1,7 @@
 {
   "name": "Gestão de Inquilinos",
   "short_name": "Inquilinos",
-  "start_url": "/inquilinos/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0A3D46",
   "theme_color": "#0A3D46",
