@@ -54,5 +54,11 @@
     <div class="predio">Vila Paulo Jorge</div>
     <div class="predio">Av. EUA</div>
   </div>
+  <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/inquilinos/service-worker.js");
+  }
+</script>
+
 </body>
 </html>
