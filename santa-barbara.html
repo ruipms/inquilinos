@@ -1,200 +1,155 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Santa Bárbara</title>
+    <meta charset="UTF-8">
+    <title>Santa Bárbara</title>
 
-<!-- SheetJS para ler Excel -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- SheetJS -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
-        color: #333;
-    }
-
-    /* Botão do menu (mobile) */
-    #menuButton {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        background: #004d5a;
-        color: white;
-        border: none;
-        padding: 10px 14px;
-        font-size: 22px;
-        border-radius: 6px;
-        cursor: pointer;
-        z-index: 1001;
-    }
-
-    /* Menu lateral */
-    #sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 260px;
-        height: 100%;
-        background: #00343d;
-        color: white;
-        padding-top: 60px;
-        overflow-y: auto;
-        transform: translateX(-260px);
-        transition: transform 0.3s ease;
-        z-index: 1000;
-    }
-
-    #sidebar.open {
-        transform: translateX(0);
-    }
-
-    #sidebar h2 {
-        margin: 0;
-        padding: 20px;
-        font-size: 20px;
-        background: #002a31;
-    }
-
-    #sidebar ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    #sidebar li {
-        padding: 12px 20px;
-        cursor: pointer;
-        border-bottom: 1px solid #004d5a;
-    }
-
-    #sidebar li:hover {
-        background: #005c6b;
-    }
-
-    /* Área de conteúdo */
-    #content {
-        margin-left: 0;
-        padding: 20px;
-        transition: margin-left 0.3s ease;
-    }
-
-    /* Desktop: sidebar fixo */
-    @media (min-width: 900px) {
-        #menuButton {
-            display: none;
+    <style>
+        :root {
+            --azul: #0f3b4c;      /* azul petróleo */
+            --azul-claro: #e6f2f5;
+            --branco: #ffffff;
+            --cinza: #f5f5f5;
         }
-        #sidebar {
-            transform: translateX(0);
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--cinza);
+            margin: 0;
+            padding: 0;
         }
-        #content {
-            margin-left: 260px;
+
+        header {
+            background: var(--azul);
+            color: var(--branco);
+            padding: 20px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
-    }
 
-    .section {
-        background: white;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+        #conteudo {
+            padding: 25px;
+        }
 
-    .section h3 {
-        margin-top: 0;
-        color: #004d5a;
-    }
-</style>
+        #estado {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--azul);
+            font-weight: bold;
+        }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--branco);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: var(--azul);
+            color: var(--branco);
+            padding: 12px;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background: var(--azul-claro);
+        }
+    </style>
 </head>
+
 <body>
 
-<button id="menuButton">☰</button>
+<header>
+    Recibos — Santa Bárbara
+</header>
 
-<div id="sidebar">
-    <h2>Santa Bárbara</h2>
-    <ul id="menuList">
-        <!-- Frações serão inseridas aqui -->
-    </ul>
-</div>
+<div id="conteudo">
+    <div id="estado">A carregar dados…</div>
 
-<div id="content">
-    <h1>Santa Bárbara</h1>
-    <p>A carregar dados...</p>
+    <table id="tabela">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Mês</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
 
 <script>
-  const EXCEL_URL = "https://1drv.ms/x/c/5cbad046349da17c/IQDbS4VaFMGWTIpG-oHsubbmARDbifGbsfUcpyxKx74J6a0?e=EquElw";
-    async function carregarExcel() {
-      const resposta = await fetch(EXCEL_URL, { mode: "cors" });
 
+async function carregarExcel() {
+
+    const estado = document.getElementById("estado");
+
+    // ⭐ LINK DO GOOGLE DRIVE (DOWNLOAD DIRETO)
+    const EXCEL_URL =
+        "https://drive.google.com/uc?export=download&id=1unDZhc6ZintO2S99LV7IDj5NFcL2laNY";
+
+    try {
+
+        estado.innerText = "A descarregar ficheiro…";
+
+        // ⭐ FETCH DO EXCEL
+        const resposta = await fetch(EXCEL_URL);
         const arrayBuffer = await resposta.arrayBuffer();
 
+        estado.innerText = "A ler ficheiro…";
+
+        // ⭐ LER EXCEL COM SHEETJS
         const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+        // ⭐ FOLHA "fichas"
         const folha = workbook.Sheets["fichas"];
         const dados = XLSX.utils.sheet_to_json(folha);
 
-        return dados;
-    }
+        estado.innerText = "A construir tabela…";
 
-    function filtrarSantaBarbara(dados) {
-        return dados.filter(linha =>
-            linha.predio &&
-            linha.predio.toLowerCase().includes("santa bárbara")
-        );
-    }
+        const tbody = document.querySelector("#tabela tbody");
+        tbody.innerHTML = "";
 
-    function criarMenu(fracoes) {
-        const menuList = document.getElementById("menuList");
-        menuList.innerHTML = "";
+        // ⭐ PREENCHER TABELA
+        dados.forEach(linha => {
+            const tr = document.createElement("tr");
 
-        fracoes.forEach(fracao => {
-            const li = document.createElement("li");
-            li.textContent = fracao.fracao;
-            li.onclick = () => mostrarFracao(fracao);
-            menuList.appendChild(li);
+            tr.innerHTML = `
+                <td>${linha.Nome || ""}</td>
+                <td>${linha.Mes || ""}</td>
+                <td>${linha.Valor || ""}</td>
+            `;
+
+            tbody.appendChild(tr);
         });
+
+        estado.innerText = "Dados carregados com sucesso.";
+
+    } catch (erro) {
+        console.error(erro);
+        estado.innerText = "Erro ao carregar dados.";
     }
+}
 
-    function mostrarFracao(fracao) {
-        const content = document.getElementById("content");
+carregarExcel();
 
-        content.innerHTML = `
-            <div class="section">
-                <h2>${fracao.fracao}</h2>
-
-                <h3>Inquilino</h3>
-                <p><strong>Nome:</strong> ${fracao.nome || "—"}</p>
-                <p><strong>NIF:</strong> ${fracao.nif || "—"}</p>
-
-                <h3>Contrato</h3>
-                <p><strong>Renda inicial:</strong> ${fracao.renda_inicial || "—"} €</p>
-                <p><strong>Tipo:</strong> ${fracao.tipo || "—"}</p>
-                <p><strong>Início:</strong> ${fracao.inicio || "—"}</p>
-
-                <h3>Notas</h3>
-                <p>${fracao.notas || "—"}</p>
-            </div>
-        `;
-    }
-
-    document.getElementById("menuButton").onclick = () => {
-        document.getElementById("sidebar").classList.toggle("open");
-    };
-
-    async function iniciar() {
-        const dados = await carregarExcel();
-        const santaBarbara = filtrarSantaBarbara(dados);
-        criarMenu(santaBarbara);
-
-        document.getElementById("content").innerHTML =
-            "<h1>Santa Bárbara</h1><p>Selecione uma fração no menu.</p>";
-    }
-
-    iniciar();
 </script>
 
 </body>
 </html>
+
+   
