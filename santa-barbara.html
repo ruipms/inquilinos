@@ -126,10 +126,10 @@
 </div>
 
 <script>
-   const EXCEL_URL = "https://onedrive.live.com/download?cid=5CBAD046349DA17C&id=5CBAD046349DA17C%21107&authkey=IQDbS4VaFMGWTIpG";
-
+  const EXCEL_URL = "https://1drv.ms/x/c/5cbad046349da17c/IQDbS4VaFMGWTIpG-oHsubbmARDbifGbsfUcpyxKx74J6a0?e=EquElw";
     async function carregarExcel() {
-        const resposta = await fetch(EXCEL_URL);
+      const resposta = await fetch(EXCEL_URL, { mode: "cors" });
+
         const arrayBuffer = await resposta.arrayBuffer();
 
         const workbook = XLSX.read(arrayBuffer, { type: "array" });
