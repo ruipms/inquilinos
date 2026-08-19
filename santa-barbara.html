@@ -1,229 +1,199 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Santa Bárbara – Gestão de Inquilinos</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santa Bárbara</title>
 
-  <style>
+<!-- SheetJS para ler Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0A3D46;
-      color: white;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        color: #333;
     }
 
-    header {
-      padding: 20px;
-      text-align: center;
-      font-size: 26px;
-      font-weight: bold;
-      background: #0F4C5C;
+    /* Botão do menu (mobile) */
+    #menuButton {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: #004d5a;
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        font-size: 22px;
+        border-radius: 6px;
+        cursor: pointer;
+        z-index: 1001;
     }
 
-    .content {
-      padding: 20px;
+    /* Menu lateral */
+    #sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 260px;
+        height: 100%;
+        background: #00343d;
+        color: white;
+        padding-top: 60px;
+        overflow-y: auto;
+        transform: translateX(-260px);
+        transition: transform 0.3s ease;
+        z-index: 1000;
     }
 
-    .secao {
-      background: white;
-      color: #0A3D46;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 25px;
+    #sidebar.open {
+        transform: translateX(0);
     }
 
-    .secao h2 {
-      margin-top: 0;
-      color: #0A3D46;
+    #sidebar h2 {
+        margin: 0;
+        padding: 20px;
+        font-size: 20px;
+        background: #002a31;
     }
 
-    .linha {
-      margin-bottom: 10px;
-      padding: 10px;
-      background: #F2F5F7;
-      border-radius: 8px;
+    #sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
 
-    .voltar {
-      display: inline-block;
-      margin: 20px;
-      padding: 10px 20px;
-      background: #145A67;
-      color: white;
-      border-radius: 8px;
-      text-decoration: none;
+    #sidebar li {
+        padding: 12px 20px;
+        cursor: pointer;
+        border-bottom: 1px solid #004d5a;
     }
 
-    .voltar:hover {
-      background: #0F4C5C;
+    #sidebar li:hover {
+        background: #005c6b;
     }
-  </style>
+
+    /* Área de conteúdo */
+    #content {
+        margin-left: 0;
+        padding: 20px;
+        transition: margin-left 0.3s ease;
+    }
+
+    /* Desktop: sidebar fixo */
+    @media (min-width: 900px) {
+        #menuButton {
+            display: none;
+        }
+        #sidebar {
+            transform: translateX(0);
+        }
+        #content {
+            margin-left: 260px;
+        }
+    }
+
+    .section {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .section h3 {
+        margin-top: 0;
+        color: #004d5a;
+    }
+</style>
+
 </head>
-
 <body>
 
-<header>Prédio – Rua de Santa Bárbara, Nº 81</header>
+<button id="menuButton">☰</button>
 
-<div class="content">
-
-  <!-- Loja 81-A -->
-  <div class="secao">
-    <h2>Loja 81-A — Fração A (2%)</h2>
-
-    <div class="linha"><strong>Inquilino:</strong> Pitada Maiúscula, Lda — NIPC 517074800</div>
-    <div class="linha"><strong>Gerente:</strong> Eduardo Ferreira da Silva Júnior</div>
-    <div class="linha"><strong>Email:</strong> mn.depetiscos@gmail.com</div>
-    <div class="linha"><strong>Fiador:</strong> Leandro Rodrigues Lopes — NIF 247814439</div>
-    <div class="linha"><strong>Renda inicial:</strong> 350,00 €</div>
-
-    <h3>Histórico de rendas</h3>
-    <div class="linha">Jan/25 — 350,00 € (coef. 1,0216)</div>
-    <div class="linha">Jan/26 — 357,00 € (coef. 1,0224)</div>
-
-    <h3>Notas</h3>
-    <div class="linha">Empreiteiro anterior: Eduardo Manuel da Silva Garcia — NIF 183350243</div>
-    <div class="linha">EDP: CIL 0060424865</div>
-  </div>
-
-  <!-- Loja 81-B-D -->
-  <div class="secao">
-    <h2>Loja 81-B-D — Fração B (23%)</h2>
-
-    <div class="linha"><strong>Inquilina:</strong> Lili Liu</div>
-    <div class="linha"><strong>Proprietária:</strong> Ana Maria — NIF 174430000</div>
-    <div class="linha"><strong>NIF da loja:</strong> 264 791 118</div>
-
-    <h3>Contrato Comercial</h3>
-    <div class="linha">Início: 01/fev/26</div>
-    <div class="linha">Duração: 10 anos</div>
-    <div class="linha">Renovação: períodos de 2 anos</div>
-    <div class="linha">Carência de renda: Fev–Abr/26</div>
-
-    <h3>Rendas</h3>
-    <div class="linha">Fev/26 — 4 500,00 €</div>
-    <div class="linha">Jan/27 — 4 635,00 € (coef. 1,03)</div>
-
-    <h3>Notas</h3>
-    <div class="linha">EDP - CPE PT000.200.0037.4189.69.VL</div>
-    <div class="linha">Reparação portão garagem — Nov/24 — POPRTIGRADE</div>
-  </div>
-
-  <!-- 11-A -->
-  <div class="secao">
-    <h2>11-A — Fração C (3%)</h2>
-
-    <div class="linha"><strong>Inquilina:</strong> D. Ivana da Conceição Guimarães Cardoso — NIF 207078599</div>
-    <div class="linha"><strong>Email:</strong> ivanagcardoso@gmail.com</div>
-    <div class="linha"><strong>Proprietários:</strong> Nuno / Maria Fernanda</div>
-    <div class="linha"><strong>Renda atual:</strong> 800,00 €</div>
-
-    <h3>Histórico de rendas</h3>
-    <div class="linha">Jul/22 — 700,00 €</div>
-    <div class="linha">Jan/24 — 748,00 €</div>
-    <div class="linha">Jan/25 — 765,00 €</div>
-    <div class="linha">Jan/26 — 800,00 €</div>
-
-    <h3>Notas</h3>
-    <div class="linha">Filha: Andreia — TM 918 555 746</div>
-    <div class="linha">Inquilina do 1º-D: Holly Stewart</div>
-  </div>
-
-  <!-- 11-B -->
-  <div class="secao">
-    <h2>11-B — Loja 2-2-A (Largo Santa Bárbara)</h2>
-
-    <div class="linha"><strong>Inquilino:</strong> VISODIDÁTICA — NIPC 502691530</div>
-    <div class="linha"><strong>Gerente:</strong> Pedro Dias</div>
-    <div class="linha"><strong>Sócios:</strong> Victor Lemos</div>
-
-    <h3>Rendas (histórico longo)</h3>
-    <div class="linha">1993 → 90 738$</div>
-    <div class="linha">1994 → 94 800$</div>
-    <div class="linha">1995 → 98 300$</div>
-    <div class="linha">2000 → 548,68 €</div>
-    <div class="linha">2005 → 642,00 €</div>
-    <div class="linha">2015 → 700,00 €</div>
-    <div class="linha">2024 → 675,00 €</div>
-    <div class="linha">2025 → 700,00 €</div>
-  </div>
-
-  <!-- 11-C -->
-  <div class="secao">
-    <h2>11-C — Fração E (3%)</h2>
-
-    <div class="linha"><strong>Inquilino:</strong> Bernardo Batista Romão Machado — NIF 242664083</div>
-    <div class="linha"><strong>Profissão:</strong> Analista MERCER</div>
-    <div class="linha"><strong>Renda inicial:</strong> 1 250,00 €</div>
-
-    <h3>Fiadores</h3>
-    <div class="linha">Lígia Freitas Batista</div>
-    <div class="linha">Carolina Maria Camões Quina Malleroni</div>
-
-    <h3>Notas</h3>
-    <div class="linha">Equipamentos incluídos: placa, forno Candy, termoacumulador Ariston 100L</div>
-  </div>
-
-  <!-- 12-A -->
-  <div class="secao">
-    <h2>12-A — Fração G (3%)</h2>
-
-    <div class="linha"><strong>Inquilino:</strong> Prof. António José Mendes Baptista — NIF 200041592</div>
-    <div class="linha"><strong>Renda atual:</strong> 613,00 €</div>
-
-    <h3>Histórico</h3>
-    <div class="linha">2014 → 500,00 €</div>
-    <div class="linha">2018 → 508,00 €</div>
-    <div class="linha">2023 → 561,00 €</div>
-    <div class="linha">2024 → 600,00 €</div>
-    <div class="linha">2025 → 613,00 €</div>
-
-    <h3>Notas</h3>
-    <div class="linha">Humidade no teto da despensa</div>
-    <div class="linha">Soltura de estuque no WC</div>
-  </div>
-
-  <!-- 12-B -->
-  <div class="secao">
-    <h2>12-B — Fração H (3%)</h2>
-
-    <div class="linha"><strong>Inquilina:</strong> D. Cristina Isabel Santos Viana — NIF 208747419</div>
-    <div class="linha"><strong>Profissão:</strong> Educadora de infância</div>
-
-    <h3>Histórico</h3>
-    <div class="linha">Renda até 2019: 513 €</div>
-    <div class="linha">Saiu em Nov/19</div>
-  </div>
-
-  <!-- 12-C -->
-  <div class="secao">
-    <h2>12-C — Fração I (3%)</h2>
-
-    <div class="linha"><strong>Inquilina:</strong> D. Luísa da Fonseca Conceição Rocha — NIF 115131779</div>
-    <div class="linha"><strong>Estado:</strong> Faleceu em Mai/24</div>
-
-    <h3>Histórico</h3>
-    <div class="linha">Contrato antigo desde 1957</div>
-    <div class="linha">Renda inicial: 1 110$</div>
-    <div class="linha">Atualizações anuais até 2025</div>
-  </div>
-
-  <!-- 12-D -->
-  <div class="secao">
-    <h2>12-D — Fração J (3%)</h2>
-
-    <div class="linha"><strong>Inquilina:</strong> D. Maria Lídia Lyra Vidal Tavares — NIF 162784627</div>
-    <div class="linha"><strong>Profissão:</strong> Educadora infantil</div>
-
-    <h3>Histórico</h3>
-    <div class="linha">Contrato antigo desde 1957</div>
-    <div class="linha">Renda inicial: 1 100$</div>
-    <div class="linha">Atualizações anuais até 2026</div>
-  </div>
-
+<div id="sidebar">
+    <h2>Santa Bárbara</h2>
+    <ul id="menuList">
+        <!-- Frações serão inseridas aqui -->
+    </ul>
 </div>
 
-<a class="voltar" href="index.html">← Voltar ao Index</a>
+<div id="content">
+    <h1>Santa Bárbara</h1>
+    <p>A carregar dados...</p>
+</div>
+
+<script>
+   const EXCEL_URL = "https://1drv.ms/x/c/5cbad046349da17c/IQDbS4VaFMGWTIpG-oHsubbmARDbifGbsfUcpyxKx74J6a0?e=25Pd08";
+    async function carregarExcel() {
+        const resposta = await fetch(EXCEL_URL);
+        const arrayBuffer = await resposta.arrayBuffer();
+
+        const workbook = XLSX.read(arrayBuffer, { type: "array" });
+        const folha = workbook.Sheets["fichas"];
+        const dados = XLSX.utils.sheet_to_json(folha);
+
+        return dados;
+    }
+
+    function filtrarSantaBarbara(dados) {
+        return dados.filter(linha =>
+            linha.predio &&
+            linha.predio.toLowerCase().includes("santa bárbara")
+        );
+    }
+
+    function criarMenu(fracoes) {
+        const menuList = document.getElementById("menuList");
+        menuList.innerHTML = "";
+
+        fracoes.forEach(fracao => {
+            const li = document.createElement("li");
+            li.textContent = fracao.fracao;
+            li.onclick = () => mostrarFracao(fracao);
+            menuList.appendChild(li);
+        });
+    }
+
+    function mostrarFracao(fracao) {
+        const content = document.getElementById("content");
+
+        content.innerHTML = `
+            <div class="section">
+                <h2>${fracao.fracao}</h2>
+
+                <h3>Inquilino</h3>
+                <p><strong>Nome:</strong> ${fracao.nome || "—"}</p>
+                <p><strong>NIF:</strong> ${fracao.nif || "—"}</p>
+
+                <h3>Contrato</h3>
+                <p><strong>Renda inicial:</strong> ${fracao.renda_inicial || "—"} €</p>
+                <p><strong>Tipo:</strong> ${fracao.tipo || "—"}</p>
+                <p><strong>Início:</strong> ${fracao.inicio || "—"}</p>
+
+                <h3>Notas</h3>
+                <p>${fracao.notas || "—"}</p>
+            </div>
+        `;
+    }
+
+    document.getElementById("menuButton").onclick = () => {
+        document.getElementById("sidebar").classList.toggle("open");
+    };
+
+    async function iniciar() {
+        const dados = await carregarExcel();
+        const santaBarbara = filtrarSantaBarbara(dados);
+        criarMenu(santaBarbara);
+
+        document.getElementById("content").innerHTML =
+            "<h1>Santa Bárbara</h1><p>Selecione uma fração no menu.</p>";
+    }
+
+    iniciar();
+</script>
 
 </body>
 </html>
